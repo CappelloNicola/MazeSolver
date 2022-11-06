@@ -42,8 +42,8 @@ public class Main {
 
         //calculate the size of the maze's block and add it to the panel
         //we consider that the first and last rows and cols has a distance of 5 px to the panel
-        /*Maze maze = new Maze(PresetMaze.Default11x11,mazePanel.getWidth(), mazePanel.getHeight());
-        mazePanel.add(maze);*/
+        Maze maze = new Maze(PresetMaze.Default11x11,mazePanel.getWidth(), mazePanel.getHeight());
+        mazePanel.add(maze);
 
         //create the Panel for the buttons
         JPanel buttonsPanel = new JPanel();
