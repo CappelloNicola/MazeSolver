@@ -67,6 +67,8 @@ public class Main {
         try {
             Class<?> myClass = Class.forName("Main");
             button1.addActionListener(new ActionListenerCustomized(maze, mazePanel, myClass.getMethod("breadthFirstSearch",Maze.class)));
+            button2.addActionListener(new ActionListenerCustomized(maze,mazePanel,myClass.getMethod("uniformCostSearch",Maze.class)));
+            button3.addActionListener(new ActionListenerCustomized(maze,mazePanel,myClass.getMethod("aStarSearch",Maze.class)));
         } catch (ClassNotFoundException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
@@ -133,6 +135,145 @@ public class Main {
 
                 }
 
+            }
+        }
+    }
+
+    public static ReturningValues uniformCostSearch(Maze maze){
+        Block node = maze.getStartBlock();
+        node.setPathCost(0);
+        //the priority queue, representing the frontier, is ordered by the pathCost of each block
+        PriorityQueue<Block> frontier = new PriorityQueue<>(1000, (o1, o2) -> {
+            if(o1.getPathCost()<o2.getPathCost()){
+                return -1;
+            }
+            else if(o1.getPathCost()>o2.getPathCost()){
+                return 1;
+            }
+            return 0;
+        });
+
+        frontier.add(node);
+
+        Set<Block> explored = new HashSet<>();
+        //the path of blocks searched to reach the end
+        List<Block> path = new ArrayList<>();
+        //keep trace of the parents of each generated block
+        //In this way we can backtrace the path from the start to the end
+        Map<Block,Block> parents = new HashMap<>();
+
+
+
+        while(true){
+
+            if(frontier.isEmpty()){
+                return null;
+            }
+
+            node = frontier.poll();
+            path.add(node);
+            if(node.getIsEnd()){
+                return new ReturningValues(path, parents);
+            }
+
+            explored.add(node);
+
+            List<Block> neighbors = node.getNeighbors();
+            for (Block e: neighbors) {
+                //each action has a cost of 1.
+                //the pathCost of the neighbor is equal to the parent pathCost plus 1
+                //this is the pathCost at this moment
+                int actualPathCost = node.getPathCost()+1;
+                if(!explored.contains(e) && !frontier.contains(e)){
+                    frontier.add(e);
+                    e.setPathCost(actualPathCost);
+                    parents.put(e, node);
+                }
+                else if(frontier.contains(e)){
+                    //we must check the pathCost inside the frontier because it may be overwritten
+                    if(e.getPathCost()>actualPathCost){
+                        e.setPathCost(actualPathCost);
+                        parents.put(e,node);
+                    }
+                }
+            }
+        }
+    }
+
+    //It's equal to the uniformCostSearch, except for the order given to the PriorityQueue
+    public static ReturningValues aStarSearch(Maze maze){
+        Block node = maze.getStartBlock();
+        node.setPathCost(0);
+        //the priority queue, representing the frontier, is ordered by f(n):
+        //For a node n, f(n) = g(n) + h(n) where
+        //g(n) is the pathCost (the distance from the starting node to n) and h(n) is the esteemed distance from n to the objective node
+        //h(n) is equal to the distance between two blocks in an imaginary 2D vector
+        //For Example: if the objective node is at pos[7][7], then h(pos[6][6])=2
+
+        PriorityQueue<Block> frontier = new PriorityQueue<>(1000, (o1, o2) -> {
+            int endingBlockRow = maze.getEndBlock().getThisRow();
+            int endingBlockCol = maze.getEndBlock().getThisCol();
+            int hnO1 = Math.abs(o1.getThisRow() - endingBlockRow) + Math.abs(o1.getThisCol() - endingBlockCol);
+            int hnO2 = Math.abs(o2.getThisRow() - endingBlockRow) + Math.abs(o2.getThisCol() - endingBlockCol);
+
+            /*double hnO1 =
+                    Math.sqrt((endingBlock.getY() - o1.getY()) * (endingBlock.getY() - o1.getY()) + (endingBlock.getX() - o1.getX()) * (endingBlock.getX() - o1.getX()));
+            double hnO2 =
+                    Math.sqrt((endingBlock.getY() - o2.getY()) * (endingBlock.getY() - o2.getY()) + (endingBlock.getX() - o2.getX()) * (endingBlock.getX() - o2.getX()));
+            */
+
+
+            if(o1.getPathCost()+hnO1 < o2.getPathCost()+hnO2){
+                return -1;
+            }
+            else if(o1.getPathCost()+hnO1 > o2.getPathCost()+hnO2){
+                return 1;
+            }
+            return 0;
+        });
+
+        frontier.add(node);
+
+        Set<Block> explored = new HashSet<>();
+        //the path of blocks searched to reach the end
+        List<Block> path = new ArrayList<>();
+        //keep trace of the parents of each generated block
+        //In this way we can backtrace the path from the start to the end
+        Map<Block,Block> parents = new HashMap<>();
+
+
+        while(true){
+
+            if(frontier.isEmpty()){
+                return null;
+            }
+
+            node = frontier.poll();
+            path.add(node);
+            if(node.getIsEnd()){
+                return new ReturningValues(path, parents);
+            }
+
+            explored.add(node);
+
+            List<Block> neighbors = node.getNeighbors();
+            for (Block e: neighbors) {
+                //each action has a cost of 1.
+                //the pathCost of the neighbor is equal to the parent pathCost plus 1
+                //this is the pathCost at this moment
+                int actualPathCost = node.getPathCost()+1;
+                if(!explored.contains(e) && !frontier.contains(e)){
+                    frontier.add(e);
+                    e.setPathCost(actualPathCost);
+                    parents.put(e, node);
+                }
+                else if(frontier.contains(e)){
+                    //we must check the pathCost inside the frontier because it may be overwritten
+                    if(e.getPathCost()>actualPathCost){
+                        e.setPathCost(actualPathCost);
+                        parents.put(e,node);
+                    }
+                }
             }
         }
     }
