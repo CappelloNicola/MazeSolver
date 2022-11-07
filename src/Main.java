@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.*;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
@@ -20,6 +22,8 @@ public class Main {
         JButton button1 = new JButton("Breadth-First Search"); //Ricerca in ampiezza
         JButton button2 = new JButton("Uniform-Cost Search");
         JButton button3 = new JButton("A* Search");
+
+
 
         //create the frame that will store the panels
         //get the size of the content
@@ -53,9 +57,84 @@ public class Main {
         buttonsPanel.add(button2);
         buttonsPanel.add(button3);
 
+
+
         //adding the panels to the frame
         frame.add(mazePanel);
         frame.add(buttonsPanel);
 
+        //add listeners to buttons
+        try {
+            Class<?> myClass = Class.forName("Main");
+            button1.addActionListener(new ActionListenerCustomized(maze, mazePanel, myClass.getMethod("breadthFirstSearch",Maze.class)));
+        } catch (ClassNotFoundException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public static java.util.List<Block> calculateActualPath (Map<Block,Block> parents, Maze maze){
+        List<Block> path = new ArrayList<>();
+        Block currentBlock = maze.getEndBlock();
+        path.add(currentBlock);
+        while(!currentBlock.getIsStart()){
+            currentBlock = parents.get(currentBlock);
+            path.add(currentBlock);
+        }
+        return path;
+    }
+
+    //this method implements the breadthFirstSearch
+    //it returns the sequence of blocks explored and the couples (block, parent)
+    //it return the nearest path. The path cost function is monotone, so it will always give the best path
+    public static ReturningValues breadthFirstSearch(Maze maze){
+
+        //keep trace of the parents of each generated block
+        //In this way we can backtrace the path from the start to the end
+        Map<Block,Block> parents = new HashMap<>();
+
+        Block currentNode = maze.getStartBlock();
+
+        //the path of blocks searched to reach the end
+        List<Block> path = new ArrayList<>();
+
+        if(currentNode.getIsEnd()){
+            List<Block> oneBlockPath = new ArrayList<>();
+            oneBlockPath.add(currentNode);
+            return new ReturningValues(oneBlockPath, parents);
+        }
+
+        //FIFO queue, frontier
+        Queue<Block> queue = new LinkedList<>();
+        queue.add(currentNode);
+
+        Set<Block> visitedNodes = new HashSet<>();
+
+        while(true){
+            if(queue.isEmpty()){
+                return null;
+            }
+
+            currentNode = queue.poll();
+            path.add(currentNode);
+            visitedNodes.add(currentNode);
+
+            java.util.List<Block> neighbors = currentNode.getNeighbors();
+            for (Block neighbor : neighbors) {
+                if (!visitedNodes.contains(neighbor)) {
+                    parents.put(neighbor, currentNode);
+                }
+                if (!queue.contains(neighbor) && !visitedNodes.contains(neighbor)) {
+                    if (neighbor.getIsEnd()) {
+                        path.add(neighbor);
+                        return new ReturningValues(path, parents);
+                    }
+                    queue.add(neighbor);
+
+                }
+
+            }
+        }
     }
 }
+
