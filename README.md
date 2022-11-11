@@ -8,7 +8,7 @@ The project has one default maze and the exit is found by using some Search Algo
 **BUG ALERT:** 
 Unfortunately the project has a bug i couldn't resolve :(
 
-When the program is executed it might appear only a black screen. Minimize the window and then bring it back on foreground to see the maze. I'm not handy with javax.swing library, sorry for the trouble. 
+When the program is executed it might appear only a black screen. Minimize the window and then bring it back to the foreground to see the maze. I'm not handy with javax.swing library, sorry for the trouble. 
 
 * Download the zip
 * Open the command prompt
