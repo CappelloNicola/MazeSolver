@@ -1,5 +1,5 @@
 # MazeSolver
-**MazeSolver** is a project made for the **Salerno University of Studies**'s course named "Artificial Intelligence Basis" (Fondamenti di Intelligenza Artificiale).
+**MazeSolver** is a project made for the **Salerno University of Studies**'s course named "**Artificial Intelligence Basis**" (Fondamenti di Intelligenza Artificiale).
 
 The project has one default maze and the exit is found by using some Search Algorithms studied in the course.
 # How to run it
