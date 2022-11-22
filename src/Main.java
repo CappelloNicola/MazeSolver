@@ -211,17 +211,19 @@ public class Main {
         //For Example: if the objective node is at pos[7][7], then h(pos[6][6])=2
 
         PriorityQueue<Block> frontier = new PriorityQueue<>(1000, (o1, o2) -> {
+            /*
+            UNUSED HEURISTIC
             int endingBlockRow = maze.getEndBlock().getThisRow();
             int endingBlockCol = maze.getEndBlock().getThisCol();
             int hnO1 = Math.abs(o1.getThisRow() - endingBlockRow) + Math.abs(o1.getThisCol() - endingBlockCol);
             int hnO2 = Math.abs(o2.getThisRow() - endingBlockRow) + Math.abs(o2.getThisCol() - endingBlockCol);
+            */
+            Block endingBlock = maze.getEndBlock();
 
-            /*double hnO1 =
+            double hnO1 =
                     Math.sqrt((endingBlock.getY() - o1.getY()) * (endingBlock.getY() - o1.getY()) + (endingBlock.getX() - o1.getX()) * (endingBlock.getX() - o1.getX()));
             double hnO2 =
                     Math.sqrt((endingBlock.getY() - o2.getY()) * (endingBlock.getY() - o2.getY()) + (endingBlock.getX() - o2.getX()) * (endingBlock.getX() - o2.getX()));
-            */
-
 
             if(o1.getPathCost()+hnO1 < o2.getPathCost()+hnO2){
                 return -1;
