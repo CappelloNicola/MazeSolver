@@ -204,20 +204,8 @@ public class Main {
     public static ReturningValues aStarSearch(Maze maze){
         Block node = maze.getStartBlock();
         node.setPathCost(0);
-        //the priority queue, representing the frontier, is ordered by f(n):
-        //For a node n, f(n) = g(n) + h(n) where
-        //g(n) is the pathCost (the distance from the starting node to n) and h(n) is the esteemed distance from n to the objective node
-        //h(n) is equal to the distance between two blocks in an imaginary 2D vector
-        //For Example: if the objective node is at pos[7][7], then h(pos[6][6])=2
-
+        
         PriorityQueue<Block> frontier = new PriorityQueue<>(1000, (o1, o2) -> {
-            /*
-            UNUSED HEURISTIC
-            int endingBlockRow = maze.getEndBlock().getThisRow();
-            int endingBlockCol = maze.getEndBlock().getThisCol();
-            int hnO1 = Math.abs(o1.getThisRow() - endingBlockRow) + Math.abs(o1.getThisCol() - endingBlockCol);
-            int hnO2 = Math.abs(o2.getThisRow() - endingBlockRow) + Math.abs(o2.getThisCol() - endingBlockCol);
-            */
             Block endingBlock = maze.getEndBlock();
 
             double hnO1 =
