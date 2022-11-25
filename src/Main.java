@@ -22,6 +22,7 @@ public class Main {
         JButton button1 = new JButton("Breadth-First Search"); //Ricerca in ampiezza
         JButton button2 = new JButton("Uniform-Cost Search");
         JButton button3 = new JButton("A* Search");
+        JButton button4 = new JButton("Depth-First Search");
 
 
 
@@ -56,6 +57,7 @@ public class Main {
         buttonsPanel.add(button1);
         buttonsPanel.add(button2);
         buttonsPanel.add(button3);
+        buttonsPanel.add(button4);
 
 
 
@@ -69,6 +71,7 @@ public class Main {
             button1.addActionListener(new ActionListenerCustomized(maze, mazePanel, myClass.getMethod("breadthFirstSearch",Maze.class)));
             button2.addActionListener(new ActionListenerCustomized(maze,mazePanel,myClass.getMethod("uniformCostSearch",Maze.class)));
             button3.addActionListener(new ActionListenerCustomized(maze,mazePanel,myClass.getMethod("aStarSearch",Maze.class)));
+            button4.addActionListener(new ActionListenerCustomized(maze,mazePanel,myClass.getMethod("depthFirstSearch", Maze.class)));
         } catch (ClassNotFoundException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
@@ -139,6 +142,45 @@ public class Main {
         }
     }
 
+    public static ReturningValues depthFirstSearch(Maze maze){
+        //LIFO queue, frontier
+        Block currentNode = maze.getStartBlock();
+        Deque<Block> queue = new ArrayDeque<Block>();
+        Set<Block> visitedNodes = new HashSet<>();
+        Map<Block,Block> parents = new HashMap<>();
+        List<Block> path = new ArrayList<>();
+
+        queue.push(currentNode);
+
+        if(currentNode.getIsEnd()){
+            List<Block> oneBlockPath = new ArrayList<>();
+            oneBlockPath.add(currentNode);
+            return new ReturningValues(oneBlockPath, parents);
+        }
+
+        while(!queue.isEmpty()){
+
+            currentNode = queue.pop();
+            path.add(currentNode);
+            visitedNodes.add(currentNode);
+
+            java.util.List<Block> neighbors = currentNode.getNeighbors();
+            for (Block neighbor : neighbors) {
+                if (!visitedNodes.contains(neighbor)) {
+                    parents.put(neighbor, currentNode);
+                    queue.push(neighbor);
+
+                    if (neighbor.getIsEnd()) {
+                        path.add(neighbor);
+                        return new ReturningValues(path, parents);
+                    }
+                    visitedNodes.add(neighbor);
+                }
+            }
+        }
+        return null;
+    }
+
     public static ReturningValues uniformCostSearch(Maze maze){
         Block node = maze.getStartBlock();
         node.setPathCost(0);
@@ -204,7 +246,7 @@ public class Main {
     public static ReturningValues aStarSearch(Maze maze){
         Block node = maze.getStartBlock();
         node.setPathCost(0);
-        
+
         PriorityQueue<Block> frontier = new PriorityQueue<>(1000, (o1, o2) -> {
             Block endingBlock = maze.getEndBlock();
 
