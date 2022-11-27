@@ -226,9 +226,9 @@ public class Main {
                 //the pathCost of the neighbor is equal to the parent pathCost plus 1
                 //this is the pathCost at this moment
                 int actualPathCost = node.getPathCost()+1;
+                e.setPathCost(actualPathCost);
                 if(!explored.contains(e) && !frontier.contains(e)){
                     frontier.add(e);
-                    e.setPathCost(actualPathCost);
                     parents.put(e, node);
                 }
                 else if(frontier.contains(e)){
@@ -294,9 +294,9 @@ public class Main {
                 //the pathCost of the neighbor is equal to the parent pathCost plus 1
                 //this is the pathCost at this moment
                 int actualPathCost = node.getPathCost()+1;
+                e.setPathCost(actualPathCost);
                 if(!explored.contains(e) && !frontier.contains(e)){
                     frontier.add(e);
-                    e.setPathCost(actualPathCost);
                     parents.put(e, node);
                 }
                 else if(frontier.contains(e)){
