@@ -212,7 +212,7 @@ public class Main {
                 return null;
             }
 
-            node = frontier.poll();
+            node = frontier.remove();
             path.add(node);
             if(node.getIsEnd()){
                 return new ReturningValues(path, parents);
