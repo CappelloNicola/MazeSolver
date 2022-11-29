@@ -24,8 +24,6 @@ public class Main {
         JButton button3 = new JButton("A* Search");
         JButton button4 = new JButton("Depth-First Search");
 
-
-
         //create the frame that will store the panels
         //get the size of the content
         JFrame frame = new JFrame();
@@ -47,7 +45,8 @@ public class Main {
 
         //calculate the size of the maze's block and add it to the panel
         //we consider that the first and last rows and cols has a distance of 5 px to the panel
-        Maze maze = new Maze(PresetMaze.Default11x11,mazePanel.getWidth(), mazePanel.getHeight());
+        Maze maze = new Maze(new MazeGenerator(20, 20), mazePanel.getWidth(), mazePanel.getHeight());
+        //Maze maze = new Maze(PresetMaze.Default11x11,mazePanel.getWidth(), mazePanel.getHeight());
         mazePanel.add(maze);
 
         //create the Panel for the buttons
@@ -58,8 +57,6 @@ public class Main {
         buttonsPanel.add(button2);
         buttonsPanel.add(button3);
         buttonsPanel.add(button4);
-
-
 
         //adding the panels to the frame
         frame.add(mazePanel);

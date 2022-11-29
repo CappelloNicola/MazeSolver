@@ -23,23 +23,23 @@ public class Maze extends JComponent {
     private Block currentColoredBlock = null;
 
     //construct an existing maze
-    //takes the presetMaze to construct, and the panel dimension to calculate the block size
-    public Maze(PresetMaze preset, int panelWidth, int panelHeight){
+    //takes the DrawableMaze to construct, and the panel dimension to calculate the block size
+    public Maze(DrawableMaze drawableMaze, int panelWidth, int panelHeight){
 
         //we consider that the first and last rows has a distance of 5 px from the top and bottom of the panel
         //that's why we subtract 10 pixel
-        int minWidth = (panelWidth - 10)/preset.getRows();
-        int minHeight = (panelHeight - 10)/ preset.getCols();
+        int minWidth = (panelWidth - 10)/drawableMaze.getRows();
+        int minHeight = (panelHeight - 10)/ drawableMaze.getCols();
         this.blockSize = Math.min(minWidth, minHeight);
-        this.mazeWidth = preset.getCols() * blockSize;
+        this.mazeWidth = drawableMaze.getCols() * blockSize;
         this.blockPadding = (panelWidth - mazeWidth)/2;
 
-        this.rows = preset.getRows();
-        this.cols = preset.getCols();
+        this.rows = drawableMaze.getRows();
+        this.cols = drawableMaze.getCols();
 
-        mazeStructure = preset.getMazeStructure();
-        this.start = preset.getStart();
-        this.end = preset.getEnd();
+        mazeStructure = drawableMaze.getMazeStructure();
+        this.start = drawableMaze.getStart();
+        this.end = drawableMaze.getEnd();
 
         blocks = new Block[rows][cols];
 
@@ -49,6 +49,9 @@ public class Maze extends JComponent {
                 Block block = null;
 
                 switch(mazeStructure[i][j]){
+                    case 0:
+                        block = new Block(i,j,false,false,false,false,blockSize);
+                        break;
                     case 1:
                         block = new Block(i,j,true,false,false,false,blockSize);
                         break;

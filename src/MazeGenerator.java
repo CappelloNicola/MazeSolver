@@ -1,6 +1,8 @@
+import java.security.InvalidParameterException;
+import java.util.Arrays;
 import java.util.Random;
 
-public class MazeGenerator {
+public class MazeGenerator implements DrawableMaze{
     //the number of rows and cols of the maze to generate
     private int rows;
     private int cols;
@@ -13,6 +15,9 @@ public class MazeGenerator {
     private BlockPoint end;
 
     public MazeGenerator(int rows, int cols) {
+        this.rows = rows;
+        this.cols = cols;
+
         maze = new int[rows][cols];
         visited = new boolean[rows][cols];
 
@@ -25,10 +30,11 @@ public class MazeGenerator {
         }
 
         start = new BlockPoint(0,0);
-        end = this.createMaze(new BlockPoint(0,0));
+        end = new BlockPoint(this.rows-1, this.cols-1);
+        this.createMaze(new BlockPoint(0,0));
     }
 
-    public BlockPoint createMaze(BlockPoint currentNode){
+    public void createMaze(BlockPoint currentNode){
         //mark the current node as visited
         visited[currentNode.getRow()][currentNode.getCol()] = true;
 
@@ -38,20 +44,186 @@ public class MazeGenerator {
         while(nextNode != null){
             //connect currentNode and nextNode, by eliminating the wall between them
             this.connectNodes(currentNode, nextNode);
+            //remove one nextNode's wall
             createMaze(nextNode);
+            //continue while currentNode has unvisitedNeighbor, else return to the previous method call
             nextNode = randomUnvisitedNeighbour(currentNode);
         }
-        //if a block doesn't have unvisited neighbors, it's the ending block
-        return currentNode;
     }
 
     private void connectNodes (BlockPoint a, BlockPoint b){
         //to connect two Nodes, a  wall must be deleted
-        //what
+        //what is the position of b in relation to a?
+        //if b is a rightNeighbor remove a's right wall and b's left wall
+        //if b is a leftNeighbor remove a's left wall and b's right wall
+        //if b id a topNeighbor remove a's top wall and b's down wall
+        //if b is a downNeighbor remove a's down wall and b's top wall
+
+        if (b.getRow() == a.getRow()+1){
+            //then it's downNeighbor
+            this.removeDownWall(a);
+            this.removeTopWall(b);
+        }
+        else if(b.getRow() == a.getRow()-1){
+            //then it's topNeighbor
+            this.removeTopWall(a);
+            this.removeDownWall(b);
+        }
+        else if(b.getCol() == a.getCol()+1){
+            //then it's rightNeighbor
+            this.removeRightWall(a);
+            this.removeLeftWall(b);
+        }
+        else{
+            //it's leftNeighbor
+            this.removeLeftWall(a);
+            this.removeRightWall(b);
+        }
+    }
+
+    private void removeTopWall(BlockPoint node){
+        int row = node.getRow();
+        int col = node.getCol();
+        int walls = maze[row][col];
+
+        switch(walls){
+            case 1:
+                maze[row][col] = 0;
+                break;
+            case 5:
+                maze[row][col] = 2;
+                break;
+            case 6:
+                maze[row][col] = 3;
+                break;
+            case 7:
+                maze[row][col] = 4;
+                break;
+            case 11:
+                maze[row][col] = 8;
+                break;
+            case 12:
+                maze[row][col] = 9;
+                break;
+            case 13:
+                maze[row][col] = 10;
+                break;
+            case 15:
+                maze[row][col] = 14;
+                break;
+            default:
+                throw new InvalidParameterException("Walls configuration not found");
+        }
+    }
+
+    private void removeDownWall(BlockPoint node){
+        int row = node.getRow();
+        int col = node.getCol();
+        int walls = maze[row][col];
+
+        switch(walls){
+            case 3:
+                maze[row][col] = 0;
+                break;
+            case 6:
+                maze[row][col] = 1;
+                break;
+            case 8:
+                maze[row][col] = 2;
+                break;
+            case 10:
+                maze[row][col] = 4;
+                break;
+            case 11:
+                maze[row][col] = 5;
+                break;
+            case 13:
+                maze[row][col] = 7;
+                break;
+            case 14:
+                maze[row][col] = 9;
+                break;
+            case 15:
+                maze[row][col] = 12;
+                break;
+            default:
+                throw new InvalidParameterException("Walls configuration not found");
+        }
+    }
+
+    private void removeRightWall(BlockPoint node){
+        int row = node.getRow();
+        int col = node.getCol();
+        int walls = maze[row][col];
+
+        switch(walls){
+            case 2:
+                maze[row][col] = 0;
+                break;
+            case 5:
+                maze[row][col] = 1;
+                break;
+            case 8:
+                maze[row][col] = 3;
+                break;
+            case 9:
+                maze[row][col] = 4;
+                break;
+            case 11:
+                maze[row][col] = 6;
+                break;
+            case 12:
+                maze[row][col] = 7;
+                break;
+            case 14:
+                maze[row][col] = 10;
+                break;
+            case 15:
+                maze[row][col] = 13;
+                break;
+            default:
+                throw new InvalidParameterException("Walls configuration not found");
+        }
+    }
+
+    private void removeLeftWall(BlockPoint node){
+        int row = node.getRow();
+        int col = node.getCol();
+        int walls = maze[row][col];
+
+        switch(walls){
+            case 4:
+                maze[row][col] = 0;
+                break;
+            case 7:
+                maze[row][col] = 1;
+                break;
+            case 9:
+                maze[row][col] = 2;
+                break;
+            case 10:
+                maze[row][col] = 3;
+                break;
+            case 12:
+                maze[row][col] = 5;
+                break;
+            case 13:
+                maze[row][col] = 6;
+                break;
+            case 14:
+                maze[row][col] = 8;
+                break;
+            case 15:
+                maze[row][col] = 11;
+                break;
+            default:
+                throw new InvalidParameterException("Walls configuration not found");
+        }
     }
 
     /*
-    * @returns BlockPoint of a random, unvisited Neighbor. If all neighbors are visited returns null*/
+    * @returns BlockPoint of a random, unvisited Neighbor. If all neighbors are visited returns null
+    * */
     private BlockPoint randomUnvisitedNeighbour(BlockPoint node){
         //get all unvisited neighbors
         BlockPoint[] unvisitedNeighbors = new BlockPoint[4];
@@ -104,6 +276,31 @@ public class MazeGenerator {
         }
 
         //choose a number from 0 to index-1 (to choose a random neighbor inside the array)
-        return unvisitedNeighbors[new Random().nextInt(5)];
+        return unvisitedNeighbors[new Random().nextInt(index)];
+    }
+
+    @Override
+    public int getRows() {
+        return this.rows;
+    }
+
+    @Override
+    public int getCols() {
+        return this.cols;
+    }
+
+    @Override
+    public int[][] getMazeStructure() {
+        return this.maze;
+    }
+
+    @Override
+    public BlockPoint getStart() {
+        return this.start;
+    }
+
+    @Override
+    public BlockPoint getEnd() {
+        return this.end;
     }
 }

@@ -2,7 +2,7 @@
  * The PresetMaze class specifies the structure of the default mazes
  */
 
-public enum PresetMaze {
+public enum PresetMaze implements DrawableMaze{
     Default11x11(11,11,0);
 
     //The number of rows of the maze
@@ -10,6 +10,7 @@ public enum PresetMaze {
     //The number of columns of the maze
     private int cols;
     //each block of the maze has a number assigned, indicating the walls it has
+    //0: none
     //1: top
     //2: right
     //3: down
@@ -47,27 +48,30 @@ public enum PresetMaze {
                     {14, 13, 6, 6, 6, 6, 3, 6, 3, 8, 14}
             };
 
-            this.start = new BlockPoint(1,0);
-            this.end = new BlockPoint(8,10);
+            this.start = new BlockPoint(0,0);
+            this.end = new BlockPoint(this.rows-1,this.cols-1);
         }
     }
-
+    @Override
     public int getRows() {
         return rows;
     }
 
+    @Override
     public int getCols() {
         return cols;
     }
 
+    @Override
     public BlockPoint getStart() {
         return start;
     }
 
+    @Override
     public BlockPoint getEnd() {
         return end;
     }
-
+    @Override
     public int[][] getMazeStructure() {
         return mazeStructure;
     }
