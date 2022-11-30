@@ -13,3 +13,5 @@ out/production/MazeSolver/BlockPoint.class
 out/production/MazeSolver/Block.class
 out/production/MazeSolver/MazeGenerator.class
 out/production/MazeSolver/DrawableMaze.class
+out/production/MazeSolver/GenerateMazeListener.class
+out/production/MazeSolver/Main$1.class

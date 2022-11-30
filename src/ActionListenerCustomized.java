@@ -35,7 +35,12 @@ public class ActionListenerCustomized implements ActionListener {
             throw new RuntimeException(ex);
         }
         Iterator<Block> iter = returningValues.getPath().iterator();
-        Timer t = new Timer(50, null);
+        //delay for 100 blocks is 50
+        //delay for 200 blocks is 25
+        //using inversely proportion
+        int delay = 5000/(maze.getRows()* maze.getCols());
+
+        Timer t = new Timer(delay, null);
 
         ReturningValues finalPathAndParents = returningValues;
         ActionListener actionListener = e1 -> {

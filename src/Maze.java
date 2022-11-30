@@ -26,21 +26,67 @@ public class Maze extends JComponent {
     //takes the DrawableMaze to construct, and the panel dimension to calculate the block size
     public Maze(DrawableMaze drawableMaze, int panelWidth, int panelHeight){
 
-        //we consider that the first and last rows has a distance of 5 px from the top and bottom of the panel
-        //that's why we subtract 10 pixel
-        int minWidth = (panelWidth - 10)/drawableMaze.getRows();
-        int minHeight = (panelHeight - 10)/ drawableMaze.getCols();
-        this.blockSize = Math.min(minWidth, minHeight);
-        this.mazeWidth = drawableMaze.getCols() * blockSize;
-        this.blockPadding = (panelWidth - mazeWidth)/2;
+        calculateBlockSize(panelWidth,panelHeight,drawableMaze.getCols(), drawableMaze.getRows());
+        calculateMazeWidth(drawableMaze.getCols(), this.blockSize);
+        calculateBlockPadding(panelWidth, this.mazeWidth);
+        setRowsAndCols(drawableMaze.getRows(),drawableMaze.getCols());
+        setMazeStructure(drawableMaze.getMazeStructure());
+        setStartAndEndBlocks(drawableMaze.getStart(),drawableMaze.getEnd());
+        setBlocksMatrix();
+        addBlockNeighbors();
+    }
 
-        this.rows = drawableMaze.getRows();
-        this.cols = drawableMaze.getCols();
+    private void addBlockNeighbors() {
+        //adding the neighbors to each block
 
-        mazeStructure = drawableMaze.getMazeStructure();
-        this.start = drawableMaze.getStart();
-        this.end = drawableMaze.getEnd();
+        for(int i=0; i<rows; i++){
+            for(int j=0; j<cols; j++){
+                Block block = blocks[i][j];
+                int neighborRow;
+                int neighborCol;
 
+                if(!block.hasRightWall()){
+                    neighborRow = i;
+                    neighborCol = j+1;
+                    if(neighborRow < this.rows){
+                        if(neighborCol < this.cols){
+                            block.addNeighbor(blocks[neighborRow][neighborCol]);
+                        }
+                    }
+                }
+                if(!block.hasLeftWall()){
+                    neighborRow = i;
+                    neighborCol = j-1;
+                    if(neighborRow < this.rows){
+                        if(neighborCol >= 0 && neighborCol < this.cols){
+                            block.addNeighbor(blocks[neighborRow][neighborCol]);
+                        }
+                    }
+                }
+                if(!block.hasTopWall()){
+                    neighborRow = i-1;
+                    neighborCol = j;
+                    if(neighborRow >= 0 && neighborRow < this.rows){
+                        if(neighborCol < this.cols){
+                            block.addNeighbor(blocks[neighborRow][neighborCol]);
+                        }
+                    }
+                }
+                if(!block.hasDownWall()){
+                    neighborRow = i+1;
+                    neighborCol = j;
+                    if(neighborRow < this.rows){
+                        if(neighborCol < this.cols){
+                            block.addNeighbor(blocks[neighborRow][neighborCol]);
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+
+    private void setBlocksMatrix() {
         blocks = new Block[rows][cols];
 
         //creates the blocks
@@ -112,55 +158,36 @@ public class Maze extends JComponent {
                 }
             }
         }
+    }
 
-        //adding the neighbors to each block
+    private void setStartAndEndBlocks(BlockPoint start, BlockPoint end) {
+        this.start = start;
+        this.end = end;
+    }
 
-        for(int i=0; i<rows; i++){
-            for(int j=0; j<cols; j++){
-                Block block = blocks[i][j];
-                int neighborRow;
-                int neighborCol;
+    private void setMazeStructure(int[][] mazeStructure) {
+        this.mazeStructure = mazeStructure;
+    }
 
-                if(!block.hasRightWall()){
-                    neighborRow = i;
-                    neighborCol = j+1;
-                    if(neighborRow < this.rows){
-                        if(neighborCol < this.cols){
-                            block.addNeighbor(blocks[neighborRow][neighborCol]);
-                        }
-                    }
-                }
-                if(!block.hasLeftWall()){
-                    neighborRow = i;
-                    neighborCol = j-1;
-                    if(neighborRow < this.rows){
-                        if(neighborCol >= 0 && neighborCol < this.cols){
-                            block.addNeighbor(blocks[neighborRow][neighborCol]);
-                        }
-                    }
-                }
-                if(!block.hasTopWall()){
-                    neighborRow = i-1;
-                    neighborCol = j;
-                    if(neighborRow >= 0 && neighborRow < this.rows){
-                        if(neighborCol < this.cols){
-                            block.addNeighbor(blocks[neighborRow][neighborCol]);
-                        }
-                    }
-                }
-                if(!block.hasDownWall()){
-                    neighborRow = i+1;
-                    neighborCol = j;
-                    if(neighborRow < this.rows){
-                        if(neighborCol < this.cols){
-                            block.addNeighbor(blocks[neighborRow][neighborCol]);
-                        }
-                    }
-                }
+    private void setRowsAndCols(int rows, int cols) {
+        this.rows = rows;
+        this.cols = cols;
+    }
 
-            }
-        }
+    private void calculateBlockPadding(int panelWidth, int mazeWidth) {
+        this.blockPadding = (panelWidth - mazeWidth)/2;
+    }
 
+    private void calculateBlockSize(int panelWidth, int panelHeight, int colsNumber, int rowsNumber){
+        //we consider that the first and last rows has a distance of 5 px from the top and bottom of the panel
+        //that's why we subtract 10 pixel
+        int minWidth = (panelWidth - 10)/colsNumber;
+        int minHeight = (panelHeight - 10)/rowsNumber;
+        this.blockSize = Math.min(minWidth, minHeight);
+    }
+
+    private void calculateMazeWidth(int colsNumber, int blockSize){
+        this.mazeWidth = colsNumber * blockSize;
     }
 
     public Block getStartBlock() {
@@ -205,8 +232,17 @@ public class Maze extends JComponent {
         }
     }
 
+    public int getRows() {
+        return rows;
+    }
+
+    public int getCols() {
+        return cols;
+    }
+
     @Override
     protected void paintComponent(Graphics g){
+        super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
 
         for (int i = 0; i<rows; i++){
@@ -215,5 +251,16 @@ public class Maze extends JComponent {
             }
         }
 
+    }
+
+    public void changeMazeStructure(DrawableMaze drawableMaze, int panelWidth, int panelHeight ) {
+        calculateBlockSize(panelWidth,panelHeight,drawableMaze.getCols(), drawableMaze.getRows());
+        calculateMazeWidth(drawableMaze.getCols(), this.blockSize);
+        calculateBlockPadding(panelWidth, this.mazeWidth);
+        setRowsAndCols(drawableMaze.getRows(),drawableMaze.getCols());
+        setMazeStructure(drawableMaze.getMazeStructure());
+        setStartAndEndBlocks(drawableMaze.getStart(),drawableMaze.getEnd());
+        setBlocksMatrix();
+        addBlockNeighbors();
     }
 }

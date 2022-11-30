@@ -5,74 +5,91 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        // java - get screen size using the Toolkit class
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int screenHeight = screenSize.height;
-        int screenWidth = screenSize.width;
 
-        //width and height of Jframe
-        int width = screenWidth - 50;
-        int height = screenHeight - 50;
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                //get screen size
+                Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                int screenHeight = screenSize.height;
+                int screenWidth = screenSize.width;
 
-        //the dimension of the content of the Jframe
-        int actualWidth;
-        int actualHeight;
+                //width and height of Jframe
+                int width = screenWidth - 50;
+                int height = screenHeight - 50;
 
-        //create the buttons to run the research algorithm
-        JButton button1 = new JButton("Breadth-First Search"); //Ricerca in ampiezza
-        JButton button2 = new JButton("Uniform-Cost Search");
-        JButton button3 = new JButton("A* Search");
-        JButton button4 = new JButton("Depth-First Search");
+                //the dimension of the content of the Jframe
+                int actualWidth;
+                int actualHeight;
 
-        //create the frame that will store the panels
-        //get the size of the content
-        JFrame frame = new JFrame();
-        frame.setResizable(false);
-        frame.setLayout(null);
-        frame.setSize(width, height);
-        frame.setTitle("Maze");
-        frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        Dimension actualSize = frame.getContentPane().getSize();
-        actualWidth = actualSize.width;
-        actualHeight = actualSize.height;
+                //create the buttons to run the research algorithm
+                JButton button1 = new JButton("Breadth-First Search"); //Ricerca in ampiezza
+                JButton button2 = new JButton("Uniform-Cost Search");
+                JButton button3 = new JButton("A* Search");
+                JButton button4 = new JButton("Depth-First Search");
+                JButton button5 = new JButton("Generate maze:");
 
-        //create the Panel that will store the maze
-        JPanel mazePanel = new JPanel();
-        mazePanel.setBounds(0,0,actualWidth,actualHeight-40);
-        mazePanel.setBackground(Color.BLACK);
-        mazePanel.setLayout(new BorderLayout());
+                //create the text fields
+                JTextField rowsNumber = new JTextField("3",2);
+                JTextField colsNumber = new JTextField("3",2);
+                JLabel xCharacter = new JLabel("X");
+                xCharacter.setForeground(Color.WHITE);
 
-        //calculate the size of the maze's block and add it to the panel
-        //we consider that the first and last rows and cols has a distance of 5 px to the panel
-        Maze maze = new Maze(new MazeGenerator(20, 20), mazePanel.getWidth(), mazePanel.getHeight());
-        //Maze maze = new Maze(PresetMaze.Default11x11,mazePanel.getWidth(), mazePanel.getHeight());
-        mazePanel.add(maze);
+                //create the frame that will store the panels
+                //get the size of the content
+                JFrame frame = new JFrame();
+                frame.setResizable(false);
+                frame.setLayout(null);
+                frame.setSize(width, height);
+                frame.setTitle("Maze");
+                frame.setVisible(true);
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                Dimension actualSize = frame.getContentPane().getSize();
+                actualWidth = actualSize.width;
+                actualHeight = actualSize.height;
 
-        //create the Panel for the buttons
-        JPanel buttonsPanel = new JPanel();
-        buttonsPanel.setBounds(0,mazePanel.getHeight(),actualWidth,40);
-        buttonsPanel.setBackground(Color.BLACK);
-        buttonsPanel.add(button1);
-        buttonsPanel.add(button2);
-        buttonsPanel.add(button3);
-        buttonsPanel.add(button4);
+                //create the Panel that will store the maze
+                JPanel mazePanel = new JPanel();
+                mazePanel.setBounds(0,0,actualWidth,actualHeight-40);
+                mazePanel.setBackground(Color.BLACK);
+                mazePanel.setLayout(new BorderLayout());
 
-        //adding the panels to the frame
-        frame.add(mazePanel);
-        frame.add(buttonsPanel);
+                //calculate the size of the maze's block and add it to the panel
+                //we consider that the first and last rows and cols has a distance of 5 px to the panel
+                Maze maze = new Maze(new MazeGenerator(5, 10), mazePanel.getWidth(), mazePanel.getHeight());
+                //Maze maze = new Maze(PresetMaze.Default11x11,mazePanel.getWidth(), mazePanel.getHeight());
+                mazePanel.add(maze);
 
-        //add listeners to buttons
-        try {
-            Class<?> myClass = Class.forName("Main");
-            button1.addActionListener(new ActionListenerCustomized(maze, mazePanel, myClass.getMethod("breadthFirstSearch",Maze.class)));
-            button2.addActionListener(new ActionListenerCustomized(maze,mazePanel,myClass.getMethod("uniformCostSearch",Maze.class)));
-            button3.addActionListener(new ActionListenerCustomized(maze,mazePanel,myClass.getMethod("aStarSearch",Maze.class)));
-            button4.addActionListener(new ActionListenerCustomized(maze,mazePanel,myClass.getMethod("depthFirstSearch", Maze.class)));
-        } catch (ClassNotFoundException | NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
+                //create the Panel for the buttons
+                JPanel buttonsPanel = new JPanel();
+                buttonsPanel.setBounds(0,mazePanel.getHeight(),actualWidth,40);
+                buttonsPanel.setBackground(Color.BLACK);
+                buttonsPanel.add(button1);
+                buttonsPanel.add(button2);
+                buttonsPanel.add(button3);
+                buttonsPanel.add(button4);
+                buttonsPanel.add(button5);
+                buttonsPanel.add(rowsNumber);
+                buttonsPanel.add(xCharacter);
+                buttonsPanel.add(colsNumber);
 
+                //adding the panels to the frame
+                frame.add(mazePanel);
+                frame.add(buttonsPanel);
+
+                //add listeners to buttons
+                try {
+                    Class<?> myClass = Class.forName("Main");
+                    button1.addActionListener(new ActionListenerCustomized(maze, mazePanel, myClass.getMethod("breadthFirstSearch",Maze.class)));
+                    button2.addActionListener(new ActionListenerCustomized(maze,mazePanel,myClass.getMethod("uniformCostSearch",Maze.class)));
+                    button3.addActionListener(new ActionListenerCustomized(maze,mazePanel,myClass.getMethod("aStarSearch",Maze.class)));
+                    button4.addActionListener(new ActionListenerCustomized(maze,mazePanel,myClass.getMethod("depthFirstSearch", Maze.class)));
+                    button5.addActionListener(new GenerateMazeListener(maze, rowsNumber, colsNumber, mazePanel));
+                } catch (ClassNotFoundException | NoSuchMethodException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
     }
 
     public static java.util.List<Block> calculateActualPath (Map<Block,Block> parents, Maze maze){
