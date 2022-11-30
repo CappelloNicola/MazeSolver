@@ -1,14 +1,11 @@
 # MazeSolver
 **MazeSolver** is a project made for the **Salerno University of Studies**'s course named "**Artificial Intelligence Basis**" (Fondamenti di Intelligenza Artificiale).
 
-The project has one default maze and the exit is found by using some Search Algorithms studied in the course.
+The project can generate random, perfect mazes and the exit is found by using some Search Algorithms studied in the course.
+A **Perfect Maze** is a Maze with only one solution. It exist one and only one path from each block to each block.
+
 # How to run it
 **YOU'LL NEED JAVA JDK >= 8.0**
-
-**BUG ALERT:** 
-Unfortunately the project has a bug i couldn't resolve :(
-
-When the program is executed it might appear only a black screen. Minimize the window and then bring it back to the foreground to see the maze. I'm not handy with javax.swing library, sorry for the trouble. 
 
 * Download the zip
 * Open the command prompt
