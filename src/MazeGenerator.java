@@ -1,5 +1,3 @@
-import java.security.InvalidParameterException;
-import java.util.Arrays;
 import java.util.Random;
 
 public class MazeGenerator implements DrawableMaze{
@@ -32,6 +30,38 @@ public class MazeGenerator implements DrawableMaze{
         start = new BlockPoint(0,0);
         end = new BlockPoint(this.rows-1, this.cols-1);
         this.createMaze(new BlockPoint(0,0));
+
+        //to create more than one path to the end block
+        this.randomDeleteWalls();
+    }
+
+    private void randomDeleteWalls() {
+        //choose a number from 0 to index-1 (to choose a random neighbor inside the array)
+        for(int index = 0; index<this.rows-1; index++){
+            Random random = new Random();
+            int i = random.nextInt((this.rows-1) - 1) + 1;
+            int j = random.nextInt((this.cols-1) - 1) + 1;
+            int wall = random.nextInt(4);
+            switch (wall){
+                case 0:
+                    removeTopWall(new BlockPoint(i,j));
+                    removeDownWall(new BlockPoint(i-1,j));
+                    break;
+                case 1:
+                    removeDownWall(new BlockPoint(i,j));
+                    removeTopWall(new BlockPoint(i+1,j));
+                    break;
+                case 2:
+                    removeRightWall(new BlockPoint(i,j));
+                    removeLeftWall(new BlockPoint(i,j+1));
+                    break;
+                case 3:
+                    removeLeftWall(new BlockPoint(i,j));
+                    removeRightWall(new BlockPoint(i,j-1));
+                    break;
+            }
+        }
+
     }
 
     public void createMaze(BlockPoint currentNode){
@@ -111,8 +141,6 @@ public class MazeGenerator implements DrawableMaze{
             case 15:
                 maze[row][col] = 14;
                 break;
-            default:
-                throw new InvalidParameterException("Walls configuration not found");
         }
     }
 
@@ -146,8 +174,6 @@ public class MazeGenerator implements DrawableMaze{
             case 15:
                 maze[row][col] = 12;
                 break;
-            default:
-                throw new InvalidParameterException("Walls configuration not found");
         }
     }
 
@@ -181,8 +207,6 @@ public class MazeGenerator implements DrawableMaze{
             case 15:
                 maze[row][col] = 13;
                 break;
-            default:
-                throw new InvalidParameterException("Walls configuration not found");
         }
     }
 
@@ -216,8 +240,6 @@ public class MazeGenerator implements DrawableMaze{
             case 15:
                 maze[row][col] = 11;
                 break;
-            default:
-                throw new InvalidParameterException("Walls configuration not found");
         }
     }
 
