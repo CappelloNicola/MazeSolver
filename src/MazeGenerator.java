@@ -37,7 +37,8 @@ public class MazeGenerator implements DrawableMaze{
 
     private void randomDeleteWalls() {
         //choose a number from 0 to index-1 (to choose a random neighbor inside the array)
-        for(int index = 0; index<this.rows-1; index++){
+        int lim = Math.max(this.rows, this.cols);
+        for(int index = 0; index<lim-1; index++){
             Random random = new Random();
             int i = random.nextInt((this.rows-1) - 1) + 1;
             int j = random.nextInt((this.cols-1) - 1) + 1;
