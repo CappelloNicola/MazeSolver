@@ -24,7 +24,6 @@ public class Main {
 
                 //create the buttons to run the research algorithm
                 JButton button1 = new JButton("Breadth-First Search"); //Ricerca in ampiezza
-                JButton button2 = new JButton("Uniform-Cost Search");
                 JButton button3 = new JButton("A* Search");
                 JButton button4 = new JButton("Depth-First Search");
                 JButton button5 = new JButton("Generate maze:");
@@ -65,7 +64,6 @@ public class Main {
                 buttonsPanel.setBounds(0,mazePanel.getHeight(),actualWidth,40);
                 buttonsPanel.setBackground(Color.BLACK);
                 buttonsPanel.add(button1);
-                buttonsPanel.add(button2);
                 buttonsPanel.add(button3);
                 buttonsPanel.add(button4);
                 buttonsPanel.add(button5);
@@ -81,7 +79,6 @@ public class Main {
                 try {
                     Class<?> myClass = Class.forName("Main");
                     button1.addActionListener(new ActionListenerCustomized(maze, mazePanel, myClass.getMethod("breadthFirstSearch",Maze.class)));
-                    button2.addActionListener(new ActionListenerCustomized(maze,mazePanel,myClass.getMethod("uniformCostSearch",Maze.class)));
                     button3.addActionListener(new ActionListenerCustomized(maze,mazePanel,myClass.getMethod("aStarSearch",Maze.class)));
                     button4.addActionListener(new ActionListenerCustomized(maze,mazePanel,myClass.getMethod("depthFirstSearch", Maze.class)));
                     button5.addActionListener(new GenerateMazeListener(maze, rowsNumber, colsNumber, mazePanel));
@@ -194,69 +191,7 @@ public class Main {
         }
         return null;
     }
-
-    public static ReturningValues uniformCostSearch(Maze maze){
-        Block node = maze.getStartBlock();
-        node.setPathCost(0);
-        //the priority queue, representing the frontier, is ordered by the pathCost of each block
-        PriorityQueue<Block> frontier = new PriorityQueue<>(1000, (o1, o2) -> {
-            if(o1.getPathCost()<o2.getPathCost()){
-                return -1;
-            }
-            else if(o1.getPathCost()>o2.getPathCost()){
-                return 1;
-            }
-            return 0;
-        });
-
-        frontier.add(node);
-
-        Set<Block> explored = new HashSet<>();
-        //the path of blocks searched to reach the end
-        List<Block> path = new ArrayList<>();
-        //keep trace of the parents of each generated block
-        //In this way we can backtrace the path from the start to the end
-        Map<Block,Block> parents = new HashMap<>();
-
-
-
-        while(true){
-
-            if(frontier.isEmpty()){
-                return null;
-            }
-
-            node = frontier.remove();
-            path.add(node);
-            if(node.getIsEnd()){
-                return new ReturningValues(path, parents);
-            }
-
-            explored.add(node);
-
-            List<Block> neighbors = node.getNeighbors();
-            for (Block e: neighbors) {
-                //each action has a cost of 1.
-                //the pathCost of the neighbor is equal to the parent pathCost plus 1
-                //this is the pathCost at this moment
-                int actualPathCost = node.getPathCost()+1;
-                e.setPathCost(actualPathCost);
-                if(!explored.contains(e) && !frontier.contains(e)){
-                    frontier.add(e);
-                    parents.put(e, node);
-                }
-                else if(frontier.contains(e)){
-                    //we must check the pathCost inside the frontier because it may be overwritten
-                    if(e.getPathCost()>actualPathCost){
-                        e.setPathCost(actualPathCost);
-                        parents.put(e,node);
-                    }
-                }
-            }
-        }
-    }
-
-    //It's equal to the uniformCostSearch, except for the order given to the PriorityQueue
+    
     public static ReturningValues aStarSearch(Maze maze){
         Block node = maze.getStartBlock();
         node.setPathCost(0);
