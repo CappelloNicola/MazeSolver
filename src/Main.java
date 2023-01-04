@@ -191,7 +191,7 @@ public class Main {
         }
         return null;
     }
-    
+
     public static ReturningValues aStarSearch(Maze maze){
         Block node = maze.getStartBlock();
         node.setPathCost(0);
